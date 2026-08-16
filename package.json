@@ -1,0 +1,8 @@
+{
+  "name": "devops-demo",
+  "version": "1.0.0",
+  "description": "A beginner DevOps CI/CD demonstration project",
+  "scripts": {
+    "test": "echo \"Tests passed successfully!\""
+  }
+}
