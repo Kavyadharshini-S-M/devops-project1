@@ -5,6 +5,10 @@ on:
     branches:
       - main
 
+  pull_request:
+    branches:
+      - main
+
 permissions:
   contents: read
   pages: write
@@ -26,17 +30,19 @@ jobs:
       - name: Run tests
         run: npm test
 
+      - name: Check Website
+        run: test -f index.html
+
       - name: Setup Pages
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: actions/configure-pages@v5
 
       - name: Upload website
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: actions/upload-pages-artifact@v3
         with:
           path: .
 
       - name: Deploy to GitHub Pages
-        id: deployment
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: actions/deploy-pages@v4
-
-      - name : Check Website
-        run: test -f index.html
