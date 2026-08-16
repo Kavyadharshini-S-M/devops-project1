@@ -1,16 +1,406 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DevOps Demo</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reflect — Daily Focus & Journal</title>
+  
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            surface: {
+              50: '#FAF9F6',
+              100: '#F4F2EC',
+              200: '#EBE7DE',
+              800: '#2A2826',
+              900: '#191817',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- GSAP CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+  <style>
+    /* Custom scrollbar and minor resets */
+    body {
+      background-color: #FAF9F6;
+      color: #191817;
+      -webkit-font-smoothing: antialiased;
+    }
+    .custom-ring {
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05), 0 2px 8px rgba(0, 0, 0, 0.03);
+    }
+  </style>
 </head>
-<body>
-    <h1>🚀 DevOps Demo</h1>
+<body class="min-h-screen flex flex-col items-center py-10 px-4 sm:px-6">
 
-    <p>This website was deployed using a CI/CD pipeline.</p>
+  <!-- Main Container -->
+  <main class="w-full max-w-2xl flex flex-col gap-8">
 
-    <p>Every time I push code to GitHub, the application is automatically deployed.</p>
+    <!-- Top Navigation / Status Header -->
+    <header class="flex items-center justify-between border-b border-surface-200 pb-5">
+      <div class="flex items-center gap-3">
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span id="live-date" class="text-xs uppercase tracking-wider font-semibold text-neutral-500">Sunday, August 16</span>
+      </div>
+      <div class="text-xs text-neutral-400 font-medium tracking-tight">Reflect v1.0</div>
+    </header>
 
-    <p> Now this is a new push, lemme see if it gets to deploy automatically!</p></body>
+    <!-- Hero Greeting & Dynamic Quote -->
+    <section class="flex flex-col gap-3">
+      <h1 id="greeting-text" class="text-3xl sm:text-4xl font-bold tracking-tight text-surface-900">
+        Good afternoon.
+      </h1>
+      <div class="relative bg-white/70 border border-surface-200 rounded-2xl p-5 custom-ring overflow-hidden">
+        <p id="quote-text" class="text-sm italic text-neutral-600 leading-relaxed transition-opacity">
+          "Simplicity is the prerequisite for reliability."
+        </p>
+        <div class="flex justify-between items-center mt-3 pt-3 border-t border-surface-100">
+          <span id="quote-author" class="text-xs font-semibold text-neutral-400">— Edsger W. Dijkstra</span>
+          <button id="refresh-quote-btn" class="text-xs text-neutral-500 hover:text-neutral-900 transition-colors flex items-center gap-1 font-medium">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            New insight
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Daily Focus / Tasks Section -->
+    <section class="bg-white border border-surface-200 rounded-2xl p-6 custom-ring flex flex-col gap-5">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-lg font-bold text-surface-900">Today's Focus</h2>
+          <p class="text-xs text-neutral-500">Complete key tasks to clear your mind</p>
+        </div>
+        <span id="task-counter" class="text-xs font-semibold bg-surface-100 text-neutral-600 px-2.5 py-1 rounded-full">
+          0 of 3 done
+        </span>
+      </div>
+
+      <!-- Task List -->
+      <ul id="task-list" class="flex flex-col gap-2.5">
+        <!-- Default Item 1 -->
+        <li class="task-item flex items-center justify-between p-3.5 rounded-xl border border-surface-100 bg-surface-50/50 hover:bg-surface-50 transition-colors">
+          <label class="flex items-center gap-3 cursor-pointer w-full">
+            <input type="checkbox" class="task-checkbox w-4 h-4 rounded text-neutral-900 border-neutral-300 focus:ring-0 focus:ring-offset-0 cursor-pointer" />
+            <span class="task-text text-sm font-medium text-neutral-800 transition-all">Review weekly progress & set next milestones</span>
+          </label>
+          <button class="delete-btn text-neutral-300 hover:text-red-500 opacity-0 hover:opacity-100 transition-opacity p-1">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </li>
+        <!-- Default Item 2 -->
+        <li class="task-item flex items-center justify-between p-3.5 rounded-xl border border-surface-100 bg-surface-50/50 hover:bg-surface-50 transition-colors">
+          <label class="flex items-center gap-3 cursor-pointer w-full">
+            <input type="checkbox" class="task-checkbox w-4 h-4 rounded text-neutral-900 border-neutral-300 focus:ring-0 focus:ring-offset-0 cursor-pointer" />
+            <span class="task-text text-sm font-medium text-neutral-800 transition-all">30-minute uninterrupted reading session</span>
+          </label>
+          <button class="delete-btn text-neutral-300 hover:text-red-500 opacity-0 hover:opacity-100 transition-opacity p-1">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </li>
+      </ul>
+
+      <!-- Add Task Input -->
+      <form id="add-task-form" class="flex gap-2 pt-2 border-t border-surface-100">
+        <input 
+          id="new-task-input"
+          type="text" 
+          placeholder="Add a new priority..." 
+          class="w-full bg-surface-50 border border-surface-200 rounded-xl px-4 py-2.5 text-sm text-neutral-800 focus:outline-none focus:border-neutral-400 transition-colors"
+          required
+        />
+        <button 
+          type="submit" 
+          class="px-4 py-2.5 bg-neutral-900 text-white rounded-xl text-sm font-medium hover:bg-neutral-800 active:scale-95 transition-all flex items-center gap-1.5 whitespace-nowrap">
+          <span>Add</span>
+        </button>
+      </form>
+    </section>
+
+    <!-- Deep Work Timer Section -->
+    <section class="bg-white border border-surface-200 rounded-2xl p-6 custom-ring flex flex-col sm:flex-row items-center justify-between gap-6">
+      <div class="flex flex-col gap-1 text-center sm:text-left">
+        <h2 class="text-lg font-bold text-surface-900">Focus Session</h2>
+        <p class="text-xs text-neutral-500">25-minute deep work interval</p>
+      </div>
+
+      <!-- Timer Display & Controls -->
+      <div class="flex items-center gap-6">
+        <!-- SVG Circular Ring -->
+        <div class="relative w-24 h-24 flex items-center justify-center">
+          <svg class="w-full h-full -rotate-90" viewBox="0 0 100 100">
+            <!-- Background circle -->
+            <circle cx="50" cy="50" r="42" stroke="currentColor" stroke-width="6" class="text-surface-100" fill="transparent"/>
+            <!-- Progress circle -->
+            <circle id="timer-progress" cx="50" cy="50" r="42" stroke="currentColor" stroke-width="6" stroke-dasharray="264" stroke-dashoffset="0" stroke-linecap="round" class="text-neutral-900 transition-all duration-300" fill="transparent"/>
+          </svg>
+          <span id="timer-display" class="absolute text-sm font-bold tracking-tight text-neutral-900">25:00</span>
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <button id="timer-toggle-btn" class="px-5 py-2 bg-neutral-900 text-white rounded-xl text-xs font-semibold hover:bg-neutral-800 active:scale-95 transition-all">
+            Start Focus
+          </button>
+          <button id="timer-reset-btn" class="px-5 py-2 border border-surface-200 text-neutral-600 rounded-xl text-xs font-semibold hover:bg-surface-50 active:scale-95 transition-all">
+            Reset
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Evening Reflection / Quick Notes -->
+    <section class="bg-white border border-surface-200 rounded-2xl p-6 custom-ring flex flex-col gap-4">
+      <div class="flex justify-between items-center">
+        <div>
+          <h2 class="text-lg font-bold text-surface-900">Daily Journal Note</h2>
+          <p class="text-xs text-neutral-500">Write one thought or takeaway from today</p>
+        </div>
+        <span id="save-indicator" class="text-xs text-neutral-400 opacity-0 transition-opacity">Saved</span>
+      </div>
+      <textarea 
+        id="journal-note" 
+        rows="3" 
+        placeholder="What worked well today? What can be refined tomorrow?" 
+        class="w-full bg-surface-50 border border-surface-200 rounded-xl p-4 text-sm text-neutral-800 focus:outline-none focus:border-neutral-400 transition-colors resize-none leading-relaxed"
+      ></textarea>
+    </section>
+
+    <!-- Footer -->
+    <footer class="text-center text-xs text-neutral-400 py-4">
+      Clear minds move faster. Press <kbd class="px-1.5 py-0.5 border border-surface-200 rounded bg-white font-mono text-[10px]">Space</kbd> to start timer.
+    </footer>
+
+  </main>
+
+  <!-- Application Logic & GSAP Animations -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. Initial GSAP Entry Animation
+      gsap.from('header', { opacity: 0, y: -10, duration: 0.6, ease: 'power2.out' });
+      gsap.from('main > section', { 
+        opacity: 0, 
+        y: 20, 
+        duration: 0.7, 
+        stagger: 0.12, 
+        ease: 'power2.out',
+        delay: 0.1
+      });
+
+      // 2. Greeting & Date Setup
+      const greetingEl = document.getElementById('greeting-text');
+      const hour = new Date().getHours();
+      let greeting = 'Good evening.';
+      if (hour < 12) greeting = 'Good morning.';
+      else if (hour < 17) greeting = 'Good afternoon.';
+      greetingEl.textContent = greeting;
+
+      const dateOptions = { weekday: 'long', month: 'long', day: 'numeric' };
+      document.getElementById('live-date').textContent = new Date().toLocaleDateString('en-US', dateOptions);
+
+      // 3. Dynamic Quotes Logic
+      const quotes = [
+        { text: "Simplicity is the prerequisite for reliability.", author: "Edsger W. Dijkstra" },
+        { text: "Focus is a muscle. The more you protect it, the stronger it grows.", author: "Cal Newport" },
+        { text: "Subtract the noise until only the essential remains.", author: "Dieter Rams" },
+        { text: "Do less, but do it with complete presence.", author: "Marcus Aurelius" }
+      ];
+      let currentQuoteIndex = 0;
+      const quoteText = document.getElementById('quote-text');
+      const quoteAuthor = document.getElementById('quote-author');
+      const refreshBtn = document.getElementById('refresh-quote-btn');
+
+      refreshBtn.addEventListener('click', () => {
+        gsap.to([quoteText, quoteAuthor], {
+          opacity: 0,
+          y: -4,
+          duration: 0.2,
+          onComplete: () => {
+            currentQuoteIndex = (currentQuoteIndex + 1) % quotes.length;
+            quoteText.textContent = `"${quotes[currentQuoteIndex].text}"`;
+            quoteAuthor.textContent = `— ${quotes[currentQuoteIndex].author}`;
+            gsap.to([quoteText, quoteAuthor], { opacity: 1, y: 0, duration: 0.3 });
+          }
+        });
+      });
+
+      // 4. Tasks & Priorities Management
+      const taskList = document.getElementById('task-list');
+      const taskCounter = document.getElementById('task-counter');
+      const addTaskForm = document.getElementById('add-task-form');
+      const newTaskInput = document.getElementById('new-task-input');
+
+      function updateCounter() {
+        const total = taskList.querySelectorAll('.task-item').length;
+        const completed = taskList.querySelectorAll('.task-checkbox:checked').length;
+        taskCounter.textContent = `${completed} of ${total} done`;
+      }
+
+      function attachTaskEvents(item) {
+        const checkbox = item.querySelector('.task-checkbox');
+        const labelText = item.querySelector('.task-text');
+        const deleteBtn = item.querySelector('.delete-btn');
+
+        // Checkbox interaction
+        checkbox.addEventListener('change', () => {
+          if (checkbox.checked) {
+            gsap.to(labelText, { color: '#9CA3AF', duration: 0.2 });
+            labelText.classList.add('line-through');
+          } else {
+            gsap.to(labelText, { color: '#1F2937', duration: 0.2 });
+            labelText.classList.remove('line-through');
+          }
+          updateCounter();
+        });
+
+        // Hover reveal delete
+        item.addEventListener('mouseenter', () => gsap.to(deleteBtn, { opacity: 1, duration: 0.2 }));
+        item.addEventListener('mouseleave', () => gsap.to(deleteBtn, { opacity: 0, duration: 0.2 }));
+
+        // Delete animation
+        deleteBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          gsap.to(item, {
+            opacity: 0,
+            x: -20,
+            duration: 0.25,
+            ease: 'power2.in',
+            onComplete: () => {
+              item.remove();
+              updateCounter();
+            }
+          });
+        });
+      }
+
+      // Initial task items setup
+      document.querySelectorAll('.task-item').forEach(attachTaskEvents);
+      updateCounter();
+
+      // Add task handler
+      addTaskForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const val = newTaskInput.value.trim();
+        if (!val) return;
+
+        const li = document.createElement('li');
+        li.className = 'task-item flex items-center justify-between p-3.5 rounded-xl border border-surface-100 bg-surface-50/50 hover:bg-surface-50 transition-colors opacity-0';
+        li.innerHTML = `
+          <label class="flex items-center gap-3 cursor-pointer w-full">
+            <input type="checkbox" class="task-checkbox w-4 h-4 rounded text-neutral-900 border-neutral-300 focus:ring-0 focus:ring-offset-0 cursor-pointer" />
+            <span class="task-text text-sm font-medium text-neutral-800 transition-all">${val}</span>
+          </label>
+          <button class="delete-btn text-neutral-300 hover:text-red-500 opacity-0 transition-opacity p-1">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        `;
+
+        taskList.appendChild(li);
+        attachTaskEvents(li);
+        gsap.to(li, { opacity: 1, y: 0, duration: 0.3, ease: 'power2.out' });
+
+        newTaskInput.value = '';
+        updateCounter();
+      });
+
+      // 5. Deep Work Interval Timer
+      const totalSeconds = 25 * 60;
+      let remainingSeconds = totalSeconds;
+      let timerInterval = null;
+      const timerDisplay = document.getElementById('timer-display');
+      const timerToggleBtn = document.getElementById('timer-toggle-btn');
+      const timerResetBtn = document.getElementById('timer-reset-btn');
+      const timerProgress = document.getElementById('timer-progress');
+      const circumference = 2 * Math.PI * 42; // r=42 -> ~263.89
+
+      function renderTime() {
+        const mins = Math.floor(remainingSeconds / 60);
+        const secs = remainingSeconds % 60;
+        timerDisplay.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        
+        // Progress ring offset
+        const progress = (totalSeconds - remainingSeconds) / totalSeconds;
+        timerProgress.style.strokeDashoffset = (circumference * (1 - progress)).toString();
+      }
+
+      function startTimer() {
+        timerToggleBtn.textContent = 'Pause';
+        timerToggleBtn.classList.replace('bg-neutral-900', 'bg-amber-600');
+        timerInterval = setInterval(() => {
+          if (remainingSeconds > 0) {
+            remainingSeconds--;
+            renderTime();
+          } else {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            timerToggleBtn.textContent = 'Completed';
+            timerToggleBtn.classList.replace('bg-amber-600', 'bg-emerald-600');
+          }
+        }, 1000);
+      }
+
+      function pauseTimer() {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        timerToggleBtn.textContent = 'Resume';
+        timerToggleBtn.classList.replace('bg-amber-600', 'bg-neutral-900');
+      }
+
+      timerToggleBtn.addEventListener('click', () => {
+        if (timerInterval) pauseTimer();
+        else startTimer();
+      });
+
+      timerResetBtn.addEventListener('click', () => {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        remainingSeconds = totalSeconds;
+        timerToggleBtn.textContent = 'Start Focus';
+        timerToggleBtn.className = 'px-5 py-2 bg-neutral-900 text-white rounded-xl text-xs font-semibold hover:bg-neutral-800 active:scale-95 transition-all';
+        renderTime();
+      });
+
+      // Spacebar hotkey for timer toggle
+      window.addEventListener('keydown', (e) => {
+        if (e.code === 'Space' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+          e.preventDefault();
+          timerToggleBtn.click();
+        }
+      });
+
+      // 6. Journal Autosave Indicator
+      const journalNote = document.getElementById('journal-note');
+      const saveIndicator = document.getElementById('save-indicator');
+      let timeoutId;
+
+      journalNote.addEventListener('input', () => {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+          gsap.to(saveIndicator, { opacity: 1, duration: 0.2 });
+          setTimeout(() => {
+            gsap.to(saveIndicator, { opacity: 0, duration: 0.5 });
+          }, 1500);
+        }, 600);
+      });
+    });
+  </script>
+</body>
 </html>
